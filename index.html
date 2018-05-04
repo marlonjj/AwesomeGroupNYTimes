@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Bootstrap Starter</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    
+   
+
+  <!-- Jumbotron Title -->
+
+        <div class="container">
+                    <div class="jumbotron text-center" style="background-color: steelblue; color: white;">
+                        <h1>New York Times Search</h1>
+            </div>
+        </div>
+      
+      
+      
+   <!-- Adding Search Paramater panel with input form -->
+
+           <div class="panel panel-primary">
+               <div class="panel-heading">
+                <h3 class="panel-title">
+                    <strong>Search Parameters</strong>
+                </h3>
+               </div>
+           <div class="panel-body">
+              
+              
+              
+  
+              <form>
+              
+                    <div class="form-group">
+                        <label for="formGroupExampleInput"> Search Term</label>
+                        <input type="text" class="form-control" id="searchTerm" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput2">Number of Records to Retrieve</label>
+                        <input type="text" class="form-control" id="number" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Start Year (Optional)</label>
+                        <input type="text" class="form-control" id="startYear" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput2">End Year (Optional)</label>
+                        <input type="text" class="form-control" id="endYear" value="">
+                    </div>
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default" id="searchButton">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>Search</button>
+                        <button type="button" class="btn btn-default" id="clearButton">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Clear Results</button>
+                    </div>
+               
+               </form>
+             
+            </div>   
+          </div>
+             
+             
+             
+             
+             
+      <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <strong>Top Articles</strong>
+            </h3>
+        </div>
+            <div class="panel-body">
+                <div id= "top-articles">
+
+                </div>
+            </div>
+        </div>  
+             
+  
+    <div class="navbar navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"></a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a>
+                    </li>
+                    <li><a href="#about">About</a>
+                    </li>
+                    <li><a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+
+  
+    <!-- /.container -->
+
+    <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script type='text/javascript' src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+    
+    <script>
+ 
+      
+      $("#searchButton").on("click", function() {//on click starts here
+      
+        var q = "&q=" + $("#searchTerm").val();//input from Search terms
+        var numberOfRecords = parseInt($("#number").val());//input from dropdown select
+        var startYear = '';
+        var endYear = '';
+        
+        if ($("#startYear").val() != ""){//*needs input button to grab attribute     
+          startYear = "&begin_date=" + $("#startYear").val();//input from optional start year
+        } 
+        if ($("#endYear").val() != ""){ //*needs input button to grab attribute
+          endYear = "&end_date=" + $("#endYear").val();//input from optional end year
+        }
+
+      
+       var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=7b1e8721ed6a43bcac7923cc25b87378"
+          + q +  startYear  +  endYear;
+          /*q = search terms
+            all variables are references e.g. response.
+          */
+
+          $.ajax({
+            url: queryURL,
+            method: "GET"        
+          })
+              .then(function(response){
+                for (var i = 0; i < numberOfRecords; i++) {
+                  var articleTitle = response.response.docs[i].headline.main; // title
+                  var articleSection = response.response.docs[i].section_name; //section
+                  var articlePubDate = response.response.docs[i].pub_date; // pubDate
+                  var articleURL = "<a href='" + response.response.docs[i].web_url + "'>"
+                    + response.response.docs[i].web_url + "<a>"; //url
+
+                  var articleCounter= 0;
+                  articleCounter++;
+
+                  var wellSection = $('<div>');
+                  wellSection.addClass('well');
+                  wellSection.attr('id', 'articleWell-' + articleCounter);
+                  wellSection.append(articleTitle + "<br>");
+                  wellSection.append(articleSection + "<br>");              
+                  wellSection.append(articlePubDate + "<br>");
+                  wellSection.append(articleURL + "<br>");
+
+                  $("#top-articles").prepend(wellSection);
+                }
+          });
+   
+
+
+
+          }); 
+//       }
+
+    </script>
+
+
+
+
+
+<!-- API KEY: 7b1e8721ed6a43bcac7923cc25b87378 -->
